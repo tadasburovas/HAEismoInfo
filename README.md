@@ -83,6 +83,10 @@ naudokite **Reconfigure** (integracijos kortelės meniu ⋮).
 > o ne dviprasmiškas „Unknown“. „Įspėjimų“ sensorius – išimtis: kai stotelė nepraneša jokių
 > įspėjimų, tai yra teisėta, žinoma būsena, o ne trūkstami duomenys.
 
+> **Eismoinfo.lt sutrikimai:** jei eismoinfo.lt nepasiekiamas, grąžina tuščią ar nepilną
+> sąrašą, stotelė išlaiko paskutines žinomas reikšmes ir lieka prieinama iki **1 valandos**
+> nuo paskutinio sėkmingo atnaujinimo. Tik po to jos sensoriai tampa **„Unavailable“**.
+
 ## Pavyzdinė Lovelace kortelė
 
 ```yaml

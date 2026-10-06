@@ -67,6 +67,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             # not risk a transient failure aborting an unrelated entry) when
             # the shared coordinator already has good data.
             await coordinator.async_config_entry_first_refresh()
+        elif (
+            not coordinator.last_update_success
+            or entry.data[CONF_STATION_ID] not in coordinator.data
+        ):
+            # The shared coordinator survives a reload of a single entry, so
+            # without this it would keep serving a failed/partial result until
+            # the next poll. Best effort: a failure here must not fail setup.
+            await coordinator.async_refresh()
 
         domain_data[entry.entry_id] = coordinator
         domain_data.setdefault("entries", set()).add(entry.entry_id)
