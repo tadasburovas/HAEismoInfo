@@ -34,6 +34,8 @@ Reikalinga **Home Assistant 2024.11 arba naujesnė** (dėl Reconfigure config fl
 
 ### Per HACS (rekomenduojama)
 
+[![Atidaryti HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=triumfas&repository=HAEismoInfo&category=integration)
+
 1. HACS → Integrations → meniu (⋮) → **Custom repositories**.
 2. Įveskite `https://github.com/triumfas/HAEismoInfo`, kategorija **Integration**.
 3. Susiraskite „Eismo Info“ sąraše ir įdiekite.
