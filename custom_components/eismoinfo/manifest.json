@@ -1,6 +1,6 @@
 {
   "domain": "eismoinfo",
-  "name": "EismoInfo",
+  "name": "Eismo Info",
   "codeowners": ["@triumfas"],
   "config_flow": true,
   "documentation": "https://github.com/triumfas/HAEismoInfo",
@@ -8,5 +8,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/triumfas/HAEismoInfo/issues",
   "requirements": [],
-  "version": "1.0.1"
+  "version": "1.0.2"
 }

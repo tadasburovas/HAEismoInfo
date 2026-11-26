@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Add an EismoInfo weather station",
+        "title": "Add an Eismo Info weather station",
         "description": "Choose a road weather station and, optionally, a name for it.",
         "data": {
           "station_id": "Station",
@@ -10,7 +10,7 @@
         }
       },
       "reconfigure": {
-        "title": "Change EismoInfo station",
+        "title": "Change Eismo Info station",
         "description": "Pick a different station for this device. The name and update interval stay unchanged.",
         "data": {
           "station_id": "Station"
@@ -31,7 +31,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "EismoInfo options",
+        "title": "Eismo Info options",
         "data": {
           "custom_name": "Name",
           "scan_interval": "Update interval (s)"

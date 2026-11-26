@@ -1,4 +1,4 @@
-# EismoInfo Home Assistant integracija
+# Eismo Info Home Assistant integracija
 
 [![Validate](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml/badge.svg)](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
@@ -36,7 +36,7 @@ Reikalinga **Home Assistant 2024.11 arba naujesnė** (dėl Reconfigure config fl
 
 1. HACS → Integrations → meniu (⋮) → **Custom repositories**.
 2. Įveskite `https://github.com/triumfas/HAEismoInfo`, kategorija **Integration**.
-3. Susiraskite „EismoInfo“ sąraše ir įdiekite.
+3. Susiraskite „Eismo Info“ sąraše ir įdiekite.
 4. Perkraukite Home Assistant.
 
 ### Rankiniu būdu
@@ -46,7 +46,7 @@ Reikalinga **Home Assistant 2024.11 arba naujesnė** (dėl Reconfigure config fl
 
 ## Konfigūravimas
 
-1. **Nustatymai → Įrenginiai ir paslaugos → Pridėti integraciją** → ieškokite „EismoInfo“.
+1. **Nustatymai → Įrenginiai ir paslaugos → Pridėti integraciją** → ieškokite „Eismo Info“.
 2. Pasirinkite norimą stotelę iš sąrašo.
 3. Nebūtina: įveskite savo pavadinimą stotelei (jei paliksite tuščią, bus naudojamas API
    pavadinimas).

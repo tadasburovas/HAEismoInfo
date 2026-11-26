@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Pridėti EismoInfo orų stotelę",
+        "title": "Pridėti Eismo Info orų stotelę",
         "description": "Pasirinkite kelių orų stotelę ir (nebūtina) jai pavadinimą.",
         "data": {
           "station_id": "Stotelė",
@@ -10,7 +10,7 @@
         }
       },
       "reconfigure": {
-        "title": "Pakeisti EismoInfo stotelę",
+        "title": "Pakeisti Eismo Info stotelę",
         "description": "Pasirinkite kitą stotelę šiam įrenginiui. Pavadinimas ir atnaujinimo intervalas liks nepakeisti.",
         "data": {
           "station_id": "Stotelė"
@@ -31,7 +31,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "EismoInfo nustatymai",
+        "title": "Eismo Info nustatymai",
         "data": {
           "custom_name": "Pavadinimas",
           "scan_interval": "Atnaujinimo intervalas (s)"

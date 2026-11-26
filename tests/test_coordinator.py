@@ -5,7 +5,6 @@ from __future__ import annotations
 from datetime import timedelta
 
 from homeassistant import config_entries
-from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.eismoinfo.const import API_URL, CONF_STATION_ID, DOMAIN, STALE_AFTER
