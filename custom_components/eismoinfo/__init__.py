@@ -10,6 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
@@ -94,6 +95,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
+    _async_remove_stale_devices(hass, entry)
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     if not created:
@@ -170,6 +173,23 @@ def _async_apply_fastest_scan_interval(
     fastest = min(intervals, default=DEFAULT_SCAN_INTERVAL)
     interval = max(MIN_SCAN_INTERVAL, min(fastest, MAX_SCAN_INTERVAL))
     coordinator.update_interval = timedelta(seconds=interval)
+
+
+def _async_remove_stale_devices(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Remove devices of stations this entry no longer tracks.
+
+    Device identifiers and entity unique ids are built from the station id, so
+    after Reconfigure points the entry at another station, the old station's
+    device (and its entities) would otherwise be left behind. Detaching the
+    entry from such a device removes it and its entities from the registries.
+    """
+    device_registry = dr.async_get(hass)
+    current = (DOMAIN, entry.data[CONF_STATION_ID])
+    for device in dr.async_entries_for_config_entry(device_registry, entry.entry_id):
+        if current not in device.identifiers:
+            device_registry.async_update_device(
+                device.id, remove_config_entry_id=entry.entry_id
+            )
 
 
 def _issue_id(entry: ConfigEntry) -> str:

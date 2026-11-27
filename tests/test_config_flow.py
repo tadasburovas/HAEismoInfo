@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 
 from custom_components.eismoinfo.const import (
     CONF_CUSTOM_NAME,
@@ -202,3 +204,47 @@ async def test_reconfigure_keeping_same_station_succeeds(hass, mock_stations_res
     assert result2["reason"] == "reconfigure_successful"
     assert entry.data[CONF_STATION_ID] == "206"
     assert entry.unique_id == "206"
+
+
+async def test_reconfigure_removes_old_station_device_and_entities(
+    hass, mock_stations_response
+):
+    """After switching stations the old station's device/entities must be gone."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_STATION_ID: "206"}
+    )
+    await hass.async_block_till_done()
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+
+    device_registry = dr.async_get(hass)
+    entity_registry = er.async_get(hass)
+    assert device_registry.async_get_device(identifiers={(DOMAIN, "206")}) is not None
+    assert any(
+        e.unique_id.startswith("206_")
+        for e in er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+    )
+
+    reconfigure_result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": entry.entry_id,
+        },
+    )
+    await hass.config_entries.flow.async_configure(
+        reconfigure_result["flow_id"], {CONF_STATION_ID: "157"}
+    )
+    await hass.async_block_till_done()
+
+    assert device_registry.async_get_device(identifiers={(DOMAIN, "206")}) is None
+    assert device_registry.async_get_device(identifiers={(DOMAIN, "157")}) is not None
+    unique_ids = [
+        e.unique_id
+        for e in er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+    ]
+    assert unique_ids
+    assert not any(u.startswith("206_") for u in unique_ids)
+    assert all(u.startswith("157_") for u in unique_ids)
