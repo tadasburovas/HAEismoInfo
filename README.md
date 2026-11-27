@@ -1,7 +1,7 @@
 # Eismo Info – Lithuanian road weather stations for Home Assistant
 
-[![Validate](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml/badge.svg)](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml)
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=triumfas&repository=HAEismoInfo&category=integration)
+[![Validate](https://github.com/tadasburovas/HAEismoInfo/actions/workflows/validate.yml/badge.svg)](https://github.com/tadasburovas/HAEismoInfo/actions/workflows/validate.yml)
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tadasburovas&repository=HAEismoInfo&category=integration)
 
 > 🇱🇹 **Lithuania only.** This integration uses the public [eismoinfo.lt](https://eismoinfo.lt) API
 > – the road traffic information service of the **Lithuanian Road Administration
@@ -37,11 +37,11 @@ Requires **Home Assistant 2024.11 or newer**.
 
 ### Home Assistant Marketplace / HACS
 
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=triumfas&repository=HAEismoInfo&category=integration)
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tadasburovas&repository=HAEismoInfo&category=integration)
 
 1. Open the Marketplace (HACS), search for **Eismo Info** and install it.
    Until it is listed in the default catalog: **Add from link** (custom repository) →
-   `triumfas/HAEismoInfo`, type **Integration**.
+   `tadasburovas/HAEismoInfo`, type **Integration**.
 2. Restart Home Assistant.
 
 ### Manual
@@ -72,7 +72,7 @@ affiliated with or endorsed by the Lithuanian Road Administration.
 
 ## Eismo Info Home Assistant integracija
 
-[![Validate](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml/badge.svg)](https://github.com/triumfas/HAEismoInfo/actions/workflows/validate.yml)
+[![Validate](https://github.com/tadasburovas/HAEismoInfo/actions/workflows/validate.yml/badge.svg)](https://github.com/tadasburovas/HAEismoInfo/actions/workflows/validate.yml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
 Home Assistant custom integracija, kuri naudoja viešą [eismoinfo.lt](https://eismoinfo.lt) API (Lietuvos automobilių kelių direkcijos kelių eismo informacija, **tik Lietuvos keliai**) ir
@@ -106,10 +106,10 @@ Reikalinga **Home Assistant 2024.11 arba naujesnė** (dėl Reconfigure config fl
 
 #### Per HACS (rekomenduojama)
 
-[![Atidaryti HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=triumfas&repository=HAEismoInfo&category=integration)
+[![Atidaryti HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tadasburovas&repository=HAEismoInfo&category=integration)
 
 1. HACS → Integrations → meniu (⋮) → **Custom repositories**.
-2. Įveskite `https://github.com/triumfas/HAEismoInfo`, kategorija **Integration**.
+2. Įveskite `https://github.com/tadasburovas/HAEismoInfo`, kategorija **Integration**.
 3. Susiraskite „Eismo Info“ sąraše ir įdiekite.
 4. Perkraukite Home Assistant.
 
