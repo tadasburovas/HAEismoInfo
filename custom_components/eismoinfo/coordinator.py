@@ -28,6 +28,9 @@ class EismoInfoCoordinator(DataUpdateCoordinator[dict[str, Station]]):
         super().__init__(
             hass,
             _LOGGER,
+            # Shared by all config entries, so it is not owned by any one of
+            # them (otherwise unloading that entry would shut it down).
+            config_entry=None,
             name=DOMAIN,
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )

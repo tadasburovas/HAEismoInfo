@@ -9,6 +9,7 @@ from datetime import timedelta
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
@@ -29,7 +30,11 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 # hass.data[DOMAIN] layout:
-#   "coordinator": the single EismoInfoCoordinator shared by every entry
+#   "coordinator": the single EismoInfoCoordinator shared by every entry. It is
+#           deliberately created *without* a config entry (config_entry=None):
+#           it outlives any one station's entry, so HA must not tie its
+#           shutdown to whichever entry happened to be set up first.
+#   "unsub_listener": callback removing the coordinator's availability listener
 #   "lock": asyncio.Lock guarding creation/teardown of the above across the
 #           await points in async_setup_entry/async_unload_entry, so two
 #           entries being set up/unloaded concurrently can't race each other
@@ -47,6 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async with lock:
         coordinator: EismoInfoCoordinator | None = domain_data.get("coordinator")
 
+        created = False
         if coordinator is None:
             # A single shared coordinator is used for all config entries
             # because the upstream API always returns the full list of
@@ -54,19 +60,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             session = async_get_clientsession(hass)
             client = EismoInfoApiClient(session)
             coordinator = EismoInfoCoordinator(hass, client)
-            domain_data["coordinator"] = coordinator
-            coordinator.async_add_listener(
+            unsub_listener = coordinator.async_add_listener(
                 lambda: _async_check_station_availability(hass)
             )
+            domain_data["coordinator"] = coordinator
+            domain_data["unsub_listener"] = unsub_listener
 
-        needs_first_refresh = coordinator.data is None
-        if needs_first_refresh:
-            # Only block on a real refresh the first time the coordinator is
-            # created. Reusing it for a second/third station, or reloading
-            # one entry after an options change, must not re-fetch (and must
-            # not risk a transient failure aborting an unrelated entry) when
-            # the shared coordinator already has good data.
-            await coordinator.async_config_entry_first_refresh()
+            # async_config_entry_first_refresh() needs a config entry, which
+            # the shared coordinator intentionally doesn't have, so do the
+            # first fetch by hand and translate a failure into "not ready".
+            await coordinator.async_refresh()
+            if not coordinator.last_update_success:
+                domain_data.pop("coordinator", None)
+                domain_data.pop("unsub_listener", None)
+                unsub_listener()
+                await coordinator.async_shutdown()
+                raise ConfigEntryNotReady(
+                    f"Could not fetch data from eismoinfo.lt: {coordinator.last_exception}"
+                ) from coordinator.last_exception
+            created = True
         elif (
             not coordinator.last_update_success
             or entry.data[CONF_STATION_ID] not in coordinator.data
@@ -84,7 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    if not needs_first_refresh:
+    if not created:
         # If we just did the first refresh above, the coordinator listener
         # (registered on creation) already ran this for every entry. Only
         # entries joining an already-populated coordinator need it here.
@@ -115,9 +127,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             entries.discard(entry.entry_id)
 
             if not entries:
-                # Last entry removed - drop the shared coordinator.
-                domain_data.pop("coordinator", None)
+                # Last entry removed - stop the shared coordinator for good.
+                # Shutting it down only now (not when whichever entry set it
+                # up unloads) keeps polling alive for the remaining stations.
+                coordinator = domain_data.pop("coordinator", None)
+                unsub_listener = domain_data.pop("unsub_listener", None)
                 domain_data.pop("entries", None)
+                if unsub_listener is not None:
+                    unsub_listener()
+                if coordinator is not None:
+                    await coordinator.async_shutdown()
             else:
                 coordinator = domain_data.get("coordinator")
                 if coordinator is not None:

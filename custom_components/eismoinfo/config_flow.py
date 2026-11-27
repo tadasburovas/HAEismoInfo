@@ -222,11 +222,15 @@ class EismoInfoConfigFlow(_EismoInfoFlowMixin, ConfigFlow, domain=DOMAIN):
             if station is None:
                 errors["base"] = "invalid_station"
             else:
-                await self.async_set_unique_id(station_id)
-                self._abort_if_unique_id_configured()
+                # Keeping the current station (the form default) must not hit
+                # the "already configured" abort: this entry owns that id.
+                if station_id != reconfigure_entry.data[CONF_STATION_ID]:
+                    await self.async_set_unique_id(station_id)
+                    self._abort_if_unique_id_configured()
 
                 return self.async_update_reload_and_abort(
                     reconfigure_entry,
+                    unique_id=station_id,
                     data_updates={CONF_STATION_ID: station_id},
                 )
 

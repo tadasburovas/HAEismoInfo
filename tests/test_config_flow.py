@@ -161,5 +161,44 @@ async def test_reconfigure_changes_station(hass, mock_stations_response):
     assert result2["type"] == FlowResultType.ABORT
     assert result2["reason"] == "reconfigure_successful"
     assert entry.data[CONF_STATION_ID] == "157"
+    # The unique id follows the station, otherwise the old station could never
+    # be added again.
+    assert entry.unique_id == "157"
     # Custom name is untouched by a station change.
     assert entry.title == "Mano stotelė"
+
+    # The station we moved away from is free to be added again.
+    add_again = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    add_again = await hass.config_entries.flow.async_configure(
+        add_again["flow_id"], {CONF_STATION_ID: "206"}
+    )
+    assert add_again["type"] == FlowResultType.CREATE_ENTRY
+
+
+async def test_reconfigure_keeping_same_station_succeeds(hass, mock_stations_response):
+    """Submitting the reconfigure form unchanged must not abort as 'already configured'."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_STATION_ID: "206"}
+    )
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+
+    reconfigure_result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": entry.entry_id,
+        },
+    )
+    result2 = await hass.config_entries.flow.async_configure(
+        reconfigure_result["flow_id"], {CONF_STATION_ID: "206"}
+    )
+
+    assert result2["type"] == FlowResultType.ABORT
+    assert result2["reason"] == "reconfigure_successful"
+    assert entry.data[CONF_STATION_ID] == "206"
+    assert entry.unique_id == "206"
